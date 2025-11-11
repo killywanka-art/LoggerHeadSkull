@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museum STC - Cráneo de Tortuga Marina 3D</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --turquesa: #40E0D0;
+            --turquesa-oscuro: #20B2AA;
+            --jade: #00A86B;
+            --jade-oscuro: #007A5E;
+            --blanco: #FFFFFF;
+            --gris-claro: #F5F5F5;
+            --texto-oscuro: #1A3C34;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--turquesa) 0%, var(--jade) 100%);
+            color: var(--texto-oscuro);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .language-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .language-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--turquesa), var(--jade));
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--jade-oscuro);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--jade);
+            margin-bottom: 30px;
+        }
+        
+        .language-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .language-btn {
+            background: var(--gris-claro);
+            border: 2px solid transparent;
+            padding: 18px 20px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--texto-oscuro);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .language-btn:hover {
+            background: var(--turquesa);
+            color: var(--blanco);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .language-btn.selected {
+            background: var(--jade);
+            color: var(--blanco);
+            border-color: var(--jade-oscuro);
+        }
+        
+        .continue-btn {
+            background: var(--jade);
+            color: var(--blanco);
+            border: none;
+            padding: 16px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .continue-btn:hover {
+            background: var(--jade-oscuro);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .continue-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .continue-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+        
+        .turtle-icon {
+            font-size: 4rem;
+            color: var(--jade-oscuro);
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: var(--blanco);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .content-page {
+            display: none;
+            width: 100%;
+        }
+        
+        /* CORRECCIÓN APLICADA: Asegurar que se muestre cuando está activo */
+        .content-page.active {
+            display: block;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--jade);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: var(--jade);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Estilos para la página de contenido */
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 25px 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--turquesa), var(--jade));
+        }
+        
+        .model-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .model-container iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .controls button {
+            flex: 1;
+            background: var(--jade);
+            color: var(--blanco);
+            border: none;
+            padding: 12px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .controls button:hover {
+            background: var(--jade-oscuro);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .info-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: var(--jade-oscuro);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--turquesa);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: var(--turquesa);
+        }
+        
+        h3 {
+            color: var(--jade);
+            margin: 15px 0 10px;
+            font-size: 1.2rem;
+        }
+        
+        .characteristics {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .characteristic {
+            background: rgba(64, 224, 208, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+            border-left: 4px solid var(--turquesa);
+        }
+        
+        .characteristic:hover {
+            transform: translateY(-5px);
+            background: rgba(64, 224, 208, 0.2);
+        }
+        
+        .characteristic h4 {
+            color: var(--jade-oscuro);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .characteristic i {
+            color: var(--turquesa);
+        }
+        
+        .species-info {
+            background: rgba(0, 168, 107, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border-left: 4px solid var(--jade);
+        }
+        
+        .mobile-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            background: transparent;
+            color: var(--jade);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            box-shadow: none;
+        }
+        
+        .nav-btn.active {
+            background: var(--jade);
+            color: white;
+        }
+        
+        .nav-btn:hover {
+            background: var(--jade);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Página de selección de idioma -->
+    <div id="language-page" class="language-container">
+        <div class="turtle-icon">
+            <i class="fas fa-turtle"></i>
+        </div>
+        <h1>Selecciona tu idioma</h1>
+        <p class="subtitle">Choose your language | Choisissez votre langue | Wählen Sie Ihre Sprache</p>
+        
+        <div class="language-options">
+            <button class="language-btn" data-lang="es">
+                <i class="fas fa-language"></i> Español
+            </button>
+            <button class="language-btn" data-lang="en">
+                <i class="fas fa-language"></i> English
+            </button>
+            <button class="language-btn" data-lang="fr">
+                <i class="fas fa-language"></i> Français
+            </button>
+            <button class="language-btn" data-lang="de">
+                <i class="fas fa-language"></i> Deutsch
+            </button>
+        </div>
+        
+        <button id="continue-btn" class="continue-btn" disabled>
+            <i class="fas fa-arrow-right"></i> Continuar
+        </button>
+    </div>
+    
+    <!-- Página de contenido (inicialmente oculta) -->
+    <div id="content-page" class="content-page">
+        <button class="back-btn" onclick="goBackToLanguageSelection()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        
+        <div class="container">
+            <header class="fade-in">
+                <h1 id="page-title">Cráneo de Tortuga Boba</h1>
+                <p id="page-subtitle" class="subtitle">Explora en 3D la anatomía única de la tortuga boba (Caretta caretta)</p>
+            </header>
+            
+            <div class="model-container fade-in">
+                <div class="sketchfab-embed-wrapper"> 
+                    <iframe title="Loggerhead sea turtle" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/35cd157961ae486cbddf5b9aec3c8d7c/embed"> 
+                    </iframe> 
+                </div>
+                <div class="controls">
+                    <button onclick="showInstructions()">
+                        <i class="fas fa-info-circle"></i> <span id="instructions-btn">Instrucciones</span>
+                    </button>
+                    <button onclick="rotateModel()">
+                        <i class="fas fa-sync-alt"></i> <span id="rotate-btn">Rotar</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="anatomy-section" class="section active fade-in">
+                <div class="info-container">
+                    <h2><i class="fas fa-bone"></i> <span id="anatomy-title">Características Anatómicas</span></h2>
+                    <p id="anatomy-desc">El cráneo de la tortuga boba muestra adaptaciones especializadas para su dieta omnívora y poderosa mordida.</p>
+                    
+                    <h3 id="adaptations-title">Adaptaciones Principales</h3>
+                    <div class="characteristics">
+                        <div class="characteristic">
+                            <h4><i class="fas fa-teeth"></i> <span class="feature-title">Mandíbulas Poderosas</span></h4>
+                            <p class="feature-desc">Posee mandíbulas extremadamente fuertes capaces de triturar crustáceos y moluscos duros.</p>
+                        </div>
+                        <div class="characteristic">
+                            <h4><i class="fas fa-eye"></i> <span class="feature-title">Cráneo Ancho y Robusto</span></h4>
+                            <p class="feature-desc">Estructura craneal ancha que proporciona espacio para músculos mandibulares desarrollados.</p>
+                        </div>
+                        <div class="characteristic">
+                            <h4><i class="fas fa-grip-lines"></i> <span class="feature-title">Pico Ganchudo</span></h4>
+                            <p class="feature-desc">Pico ganchudo y fuerte ideal para desgarrar y manipular presas de caparazón duro.</p>
+                        </div>
+                        <div class="characteristic">
+                            <h4><i class="fas fa-feather-alt"></i> <span class="feature-title">Arcos Cigomáticos Pronunciados</span></h4>
+                            <p class="feature-desc">Arcos cigomáticos bien desarrollados que soportan la enorme fuerza de mordida.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="species-section" class="section fade-in">
+                <div class="info-container">
+                    <h2><i class="fas fa-fish"></i> <span id="species-title">Información de la Especie</span></h2>
+                    <div class="species-info">
+                        <p id="species-desc">La <strong>tortuga boba (<em>Caretta caretta</em>)</strong> es conocida por su cabeza grande y poderosa mandíbula, siendo una de las tortugas marinas más comunes.</p>
+                        
+                        <h3 id="species-features">Características principales:</h3>
+                        <ul id="species-list" style="margin-left: 20px; margin-top: 10px;">
+                            <li>Se alimenta de crustáceos, moluscos y peces</li>
+                            <li>Tiene la cabeza más grande entre las tortugas marinas</li>
+                            <li>Puede alcanzar hasta 1.2 metros de longitud</li>
+                            <li>Pesa normalmente entre 80-200 kg</li>
+                            <li>Realiza largas migraciones oceánicas</li>
+                        </ul>
+                        
+                        <h3 id="conservation-title">Estado de conservación:</h3>
+                        <p><i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i> <span id="conservation-status">Vulnerable (UICN)</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="fade-in">
+                <p id="footer-text">Modelo 3D proporcionado por Natural History Museum, University of Pisa a través de Sketchfab</p>
+                <p class="credits">Página creada para visualización educativa de anatomía animal</p>
+            </footer>
+        </div>
+
+        <div class="mobile-nav">
+            <button class="nav-btn active" onclick="showSection('anatomy-section', this)">
+                <i class="fas fa-bone"></i>
+            </button>
+            <button class="nav-btn" onclick="showSection('species-section', this)">
+                <i class="fas fa-fish"></i>
+            </button>
+            <button class="nav-btn" onclick="showInstructions()">
+                <i class="fas fa-question-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Visualizador 3D Educativo - Tortuga Boba</p>
+    </footer>
+
+    <script>
+        // Textos en diferentes idiomas
+        const translations = {
+            es: {
+                title: "Cráneo de Tortuga Boba",
+                subtitle: "Explora en 3D la anatomía única de la tortuga boba (Caretta caretta)",
+                instructionsBtn: "Instrucciones",
+                rotateBtn: "Rotar",
+                anatomyTitle: "Características Anatómicas",
+                anatomyDesc: "El cráneo de la tortuga boba muestra adaptaciones especializadas para su dieta omnívora y poderosa mordida.",
+                adaptationsTitle: "Adaptaciones Principales",
+                features: [
+                    { title: "Mandíbulas Poderosas", desc: "Posee mandíbulas extremadamente fuertes capaces de triturar crustáceos y moluscos duros." },
+                    { title: "Cráneo Ancho y Robusto", desc: "Estructura craneal ancha que proporciona espacio para músculos mandibulares desarrollados." },
+                    { title: "Pico Ganchudo", desc: "Pico ganchudo y fuerte ideal para desgarrar y manipular presas de caparazón duro." },
+                    { title: "Arcos Cigomáticos Pronunciados", desc: "Arcos cigomáticos bien desarrollados que soportan la enorme fuerza de mordida." }
+                ],
+                speciesTitle: "Información de la Especie",
+                speciesDesc: "La <strong>tortuga boba (<em>Caretta caretta</em>)</strong> es conocida por su cabeza grande y poderosa mandíbula, siendo una de las tortugas marinas más comunes.",
+                speciesFeatures: "Características principales:",
+                speciesList: [
+                    "Se alimenta de crustáceos, moluscos y peces",
+                    "Tiene la cabeza más grande entre las tortugas marinas",
+                    "Puede alcanzar hasta 1.2 metros de longitud",
+                    "Pesa normalmente entre 80-200 kg",
+                    "Realiza largas migraciones oceánicas"
+                ],
+                conservationTitle: "Estado de conservación:",
+                conservationStatus: "Vulnerable (UICN)",
+                footerText: "Modelo 3D proporcionado por Natural History Museum, University of Pisa a través de Sketchfab",
+                instructions: "INSTRUCCIONES:\n\n• ROTAR: Desliza el dedo sobre el modelo\n• ZOOM: Pellizca para acercar/alejar\n• NAVEGACIÓN: Usa los botones inferiores para cambiar secciones"
+            },
+            en: {
+                title: "Loggerhead Turtle Skull",
+                subtitle: "Explore in 3D the unique anatomy of the loggerhead turtle (Caretta caretta)",
+                instructionsBtn: "Instructions",
+                rotateBtn: "Rotate",
+                anatomyTitle: "Anatomical Features",
+                anatomyDesc: "The loggerhead turtle skull shows specialized adaptations for its omnivorous diet and powerful bite.",
+                adaptationsTitle: "Main Adaptations",
+                features: [
+                    { title: "Powerful Jaws", desc: "Has extremely strong jaws capable of crushing crustaceans and hard mollusks." },
+                    { title: "Wide Robust Skull", desc: "Wide cranial structure that provides space for developed jaw muscles." },
+                    { title: "Hooked Beak", desc: "Strong hooked beak ideal for tearing and manipulating hard-shelled prey." },
+                    { title: "Prominent Zygomatic Arches", desc: "Well-developed zygomatic arches that support the enormous bite force." }
+                ],
+                speciesTitle: "Species Information",
+                speciesDesc: "The <strong>loggerhead turtle (<em>Caretta caretta</em>)</strong> is known for its large head and powerful jaw, being one of the most common sea turtles.",
+                speciesFeatures: "Main characteristics:",
+                speciesList: [
+                    "Feeds on crustaceans, mollusks and fish",
+                    "Has the largest head among sea turtles",
+                    "Can reach up to 1.2 meters in length",
+                    "Typically weighs between 80-200 kg",
+                    "Performs long oceanic migrations"
+                ],
+                conservationTitle: "Conservation status:",
+                conservationStatus: "Vulnerable (IUCN)",
+                footerText: "3D model provided by Natural History Museum, University of Pisa via Sketchfab",
+                instructions: "INSTRUCTIONS:\n\n• ROTATE: Swipe your finger over the model\n• ZOOM: Pinch to zoom in/out\n• NAVIGATION: Use the bottom buttons to change sections"
+            },
+            fr: {
+                title: "Crâne de Tortue Caouanne",
+                subtitle: "Explorez en 3D l'anatomie unique de la tortue caouanne (Caretta caretta)",
+                instructionsBtn: "Instructions",
+                rotateBtn: "Tourner",
+                anatomyTitle: "Caractéristiques Anatomiques",
+                anatomyDesc: "Le crâne de la tortue caouanne montre des adaptations spécialisées pour son régime omnivore et sa morsure puissante.",
+                adaptationsTitle: "Adaptations Principales",
+                features: [
+                    { title: "Mâchoires Puissantes", desc: "Possède des mâchoires extrêmement fortes capables de broyer crustacés et mollusques durs." },
+                    { title: "Crâne Large et Robuste", desc: "Structure crânienne large qui fournit de l'espace pour les muscles mandibulaires développés." },
+                    { title: "Bec Crochu", desc: "Bec crochu et fort idéal pour déchirer et manipuler les proies à coquille dure." },
+                    { title: "Arches Zygomatiques Prononcées", desc: "Arches zygomatiques bien développées qui supportent l'énorme force de morsure." }
+                ],
+                speciesTitle: "Informations sur l'Espèce",
+                speciesDesc: "La <strong>tortue caouanne (<em>Caretta caretta</em>)</strong> est connue pour sa grande tête et sa mâchoire puissante, étant l'une des tortues marines les plus communes.",
+                speciesFeatures: "Caractéristiques principales:",
+                speciesList: [
+                    "Se nourrit de crustacés, mollusques et poissons",
+                    "A la plus grande tête parmi les tortues marines",
+                    "Peut atteindre jusqu'à 1,2 mètre de longueur",
+                    "Pèse normalement entre 80 et 200 kg",
+                    "Effectue de longues migrations océaniques"
+                ],
+                conservationTitle: "Statut de conservation:",
+                conservationStatus: "Vulnérable (UICN)",
+                footerText: "Modèle 3D fourni par Natural History Museum, University of Pisa via Sketchfab",
+                instructions: "INSTRUCTIONS:\n\n• TOURNER: Faites glisser votre doigt sur le modèle\n• ZOOM: Pincez pour zoomer/dézoomer\n• NAVIGATION: Utilisez les boutons du bas pour changer de sections"
+            },
+            de: {
+                title: "Unechte Karettschildkröten-Schädel",
+                subtitle: "Erkunden Sie in 3D die einzigartige Anatomie der Unechten Karettschildkröte (Caretta caretta)",
+                instructionsBtn: "Anweisungen",
+                rotateBtn: "Drehen",
+                anatomyTitle: "Anatomische Merkmale",
+                anatomyDesc: "Der Schädel der Unechten Karettschildkröte zeigt spezialisierte Anpassungen an ihre omnivore Ernährung und kräftige Bisskraft.",
+                adaptationsTitle: "Hauptanpassungen",
+                features: [
+                    { title: "Kräftige Kiefer", desc: "Besitzt extrem starke Kiefer, die Krebstiere und harte Weichtiere zerkleinern können." },
+                    { title: "Breiter Robuster Schädel", desc: "Breite Schädelstruktur, die Platz für entwickelte Kaumuskeln bietet." },
+                    { title: "Gebogener Schnabel", desc: "Starker gebogener Schnabel ideal zum Zerreißen und Manipulieren von Beute mit harter Schale." },
+                    { title: "Ausgeprägte Jochbögen", desc: "Gut entwickelte Jochbögen, die die enorme Bisskraft unterstützen." }
+                ],
+                speciesTitle: "Artinformation",
+                speciesDesc: "Die <strong>Unechte Karettschildkröte (<em>Caretta caretta</em>)</strong> ist bekannt für ihren großen Kopf und kräftigen Kiefer und gehört zu den häufigsten Meeresschildkröten.",
+                speciesFeatures: "Hauptmerkmale:",
+                speciesList: [
+                    "Ernährt sich von Krebstieren, Weichtieren und Fischen",
+                    "Hat den größten Kopf unter den Meeresschildkröten",
+                    "Kann bis zu 1,2 Meter lang werden",
+                    "Wiegt normalerweise zwischen 80-200 kg",
+                    "Führt lange ozeanische Wanderungen durch"
+                ],
+                conservationTitle: "Erhaltungsstatus:",
+                conservationStatus: "Gefährdet (IUCN)",
+                footerText: "3D-Modell bereitgestellt von Natural History Museum, University of Pisa über Sketchfab",
+                instructions: "ANWEISUNGEN:\n\n• DREHEN: Wischen Sie mit dem Finger über das Modell\n• ZOOM: Zwei Finger zusammenziehen zum Zoomen\n• NAVIGATION: Verwenden Sie die unteren Schaltflächen, um zwischen Abschnitten zu wechseln"
+            }
+        };
+
+        let selectedLanguage = null;
+
+        // Configurar eventos para los botones de idioma
+        document.querySelectorAll('.language-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Quitar la selección anterior
+                document.querySelectorAll('.language-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                
+                // Seleccionar el nuevo idioma
+                this.classList.add('selected');
+                selectedLanguage = this.getAttribute('data-lang');
+                
+                // Habilitar el botón de continuar
+                document.getElementById('continue-btn').disabled = false;
+            });
+        });
+
+        // Evento para el botón de continuar
+        document.getElementById('continue-btn').addEventListener('click', function() {
+            if (selectedLanguage) {
+                console.log('Continuando con idioma:', selectedLanguage);
+                
+                // Ocultar página de idiomas
+                document.getElementById('language-page').style.display = 'none';
+                
+                // Mostrar página de contenido - CORRECCIÓN APLICADA
+                document.getElementById('content-page').style.display = 'block';
+                
+                // Aplicar traducciones
+                applyTranslations(selectedLanguage);
+            } else {
+                alert('Por favor, selecciona un idioma primero.');
+            }
+        });
+
+        // Función para aplicar las traducciones
+        function applyTranslations(lang) {
+            const t = translations[lang];
+            
+            // Aplicar textos a los elementos
+            document.getElementById('page-title').textContent = t.title;
+            document.getElementById('page-subtitle').textContent = t.subtitle;
+            document.getElementById('instructions-btn').textContent = t.instructionsBtn;
+            document.getElementById('rotate-btn').textContent = t.rotateBtn;
+            document.getElementById('anatomy-title').textContent = t.anatomyTitle;
+            document.getElementById('anatomy-desc').textContent = t.anatomyDesc;
+            document.getElementById('adaptations-title').textContent = t.adaptationsTitle;
+            document.getElementById('species-title').textContent = t.speciesTitle;
+            document.getElementById('species-desc').innerHTML = t.speciesDesc;
+            document.getElementById('species-features').textContent = t.speciesFeatures;
+            document.getElementById('conservation-title').textContent = t.conservationTitle;
+            document.getElementById('conservation-status').textContent = t.conservationStatus;
+            document.getElementById('footer-text').textContent = t.footerText;
+            
+            // Aplicar características
+            const featureTitles = document.querySelectorAll('.feature-title');
+            const featureDescs = document.querySelectorAll('.feature-desc');
+            t.features.forEach((feature, index) => {
+                if (featureTitles[index]) featureTitles[index].textContent = feature.title;
+                if (featureDescs[index]) featureDescs[index].textContent = feature.desc;
+            });
+            
+            // Aplicar lista de especies
+            const speciesListItems = document.getElementById('species-list').querySelectorAll('li');
+            t.speciesList.forEach((item, index) => {
+                if (speciesListItems[index]) speciesListItems[index].textContent = item;
+            });
+        }
+
+        // Función para volver a la selección de idioma
+        function goBackToLanguageSelection() {
+            document.getElementById('content-page').style.display = 'none';
+            document.getElementById('language-page').style.display = 'block';
+        }
+
+        // Funciones para la página de contenido
+        function showSection(sectionId, button) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (button) {
+                button.classList.add('active');
+            }
+            
+            document.getElementById(sectionId).classList.remove('fade-in');
+            setTimeout(() => {
+                document.getElementById(sectionId).classList.add('fade-in');
+            }, 10);
+        }
+        
+        function rotateModel() {
+            const t = translations[selectedLanguage];
+            alert(t.instructions);
+        }
+        
+        function showInstructions() {
+            const t = translations[selectedLanguage];
+            alert(t.instructions);
+        }
+    </script>
+</body>
+</html>
